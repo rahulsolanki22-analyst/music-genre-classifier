@@ -18,11 +18,15 @@ All models were evaluated on the same unseen test set of 2,475 audio segments.
 1. Overall Performance Metrics
 The weighted average F1-score, which balances precision and recall across all classes, is the primary metric for comparison.
 
-Model	                            Accuracy	Weighted Avg F1-Score
-Logistic Regression	                59%	                58%
-Support Vector Machine (SVM)	    74%	                74%
-Random Forest	                    78%	                78%
-Convolutional Neural Network (CNN)	73%	                74%
+## Model Performance
+
+| Model                         | Accuracy | Weighted Avg F1-Score |
+|------------------------------|----------|----------------------|
+| Logistic Regression          | 59%      | 58%                  |
+| Support Vector Machine (SVM) | 74%      | 74%                  |
+| Random Forest                | 78%      | 78%                  |
+| Convolutional Neural Network (CNN) | 73% | 74%                  |
+
 
 Conclusion: The Random Forest demonstrates superior overall performance, achieving the highest accuracy and weighted F1-score, followed by the SVM. The Logistic Regression model serves as a baseline but is clearly outperformed by the more complex models.
 
