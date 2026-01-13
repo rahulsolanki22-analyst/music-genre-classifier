@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ML Models (optional - keep if you want them in repo)
+# *.joblib
+# *.h5
+
+# Data files (optional - keep if you want them in repo)
+# *.csv
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/
+
+# Project data directories
+genres_original/
+
+# Large artifacts
+*.joblib
+*.h5
+features.csv
