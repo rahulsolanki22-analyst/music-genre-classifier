@@ -32,6 +32,6 @@ Thumbs.db
 genres_original/
 
 # Large artifacts
-*.joblib
-*.h5
+# *.joblib
+# *.h5
 features.csv
