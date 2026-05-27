@@ -19,103 +19,209 @@ st.set_page_config(page_title="Music Genre Classifier", layout="centered")
 
 st.markdown("""
 <style>
-/* Background + base text */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+/* Global application body overrides */
 .stApp {
-  background: radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.06), transparent 40%),
-              radial-gradient(1000px 500px at 90% 20%, rgba(255,255,255,0.05), transparent 40%),
-              linear-gradient(135deg, #10131a 0%, #1a2030 100%);
-  color: #eef0f3;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-}
-h1, .title-text {
-  text-align:center;
-  font-weight:800;
-  letter-spacing:0.3px;
-  margin-bottom:0.2rem;
-  color:#f5f7fb;
+  background: radial-gradient(1000px 500px at 5% 5%, rgba(99, 102, 241, 0.07), transparent 50%),
+              radial-gradient(1000px 500px at 95% 95%, rgba(20, 184, 166, 0.05), transparent 50%),
+              linear-gradient(135deg, #090c11 0%, #0d1218 100%) !important;
+  color: #f8fafc !important;
+  font-family: 'Outfit', -apple-system, sans-serif !important;
 }
 
-/* Uploader */
+/* Custom modern header styling */
+h1, .title-text {
+  text-align: center;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.8px !important;
+  margin-bottom: 0.2rem;
+  background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Translucent glass panel containers */
+.glass-panel {
+  border-radius: 20px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.glass-panel:hover {
+  border-color: rgba(99, 102, 241, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+/* Streamlit dropzone customized hover */
 [data-testid="stFileUploaderDropzone"] {
-  border: 2px dashed rgba(200, 210, 230, 0.35) !important;
-  background: rgba(255,255,255,0.02) !important;
-  border-radius: 16px !important;
-  transition: border-color .25s ease, transform .2s ease, background .25s ease;
+  border: 2px dashed rgba(255, 255, 255, 0.07) !important;
+  background: rgba(255, 255, 255, 0.01) !important;
+  border-radius: 20px !important;
+  padding: 30px 20px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 [data-testid="stFileUploaderDropzone"]:hover {
-  border-color: rgba(120, 160, 255, 0.65) !important;
-  transform: translateY(-1px);
-  background: rgba(120,160,255,0.06) !important;
+  border-color: #6366f1 !important;
+  background: rgba(99, 102, 241, 0.04) !important;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.15) !important;
 }
 
-/* Button */
+/* Custom premium buttons */
 .stButton > button {
-  background: linear-gradient(135deg, #4f7cff, #6dd6ff);
-  border: 0;
-  color: #0b1220;
-  border-radius: 12px;
-  font-weight: 700;
-  padding: 0.6rem 1rem;
-  box-shadow: 0 8px 24px rgba(109, 214, 255, 0.2);
-  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-radius: 14px !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-weight: 700 !important;
+  padding: 0.7rem 1.4rem !important;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .stButton > button:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.02);
-  box-shadow: 0 10px 26px rgba(109, 214, 255, 0.28);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.45) !important;
+  filter: brightness(1.1) !important;
 }
 
-/* Card */
+/* Dynamic predicted result card */
 .pred-card {
-  border-radius: 18px;
-  padding: 18px 18px 8px 18px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+  border-radius: 24px;
+  padding: 28px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Confidence ring */
+/* Neon Glows dynamically injected based on genre classification */
+.glow-rock-metal { box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.35); border-color: rgba(239, 68, 68, 0.25) !important; }
+.glow-classical-jazz { box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.35); border-color: rgba(245, 158, 11, 0.25) !important; }
+.glow-disco-pop { box-shadow: 0 25px 50px -12px rgba(236, 72, 153, 0.35); border-color: rgba(236, 72, 153, 0.25) !important; }
+.glow-groove-reggae { box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.35); border-color: rgba(16, 185, 129, 0.25) !important; }
+
+/* Custom dynamic confidence ring styling */
 .conf-ring {
   --p: 0;
-  --fill: #4cd964;
-  width: 120px;
+  --fill: #14b8a6;
+  width: 130px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
-  background: conic-gradient(var(--fill) calc(var(--p)*1%), #283044 0);
+  background: conic-gradient(var(--fill) calc(var(--p)*1%), rgba(255, 255, 255, 0.04) 0);
   display: grid;
   place-items: center;
   position: relative;
-  transition: background 0.4s ease;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
 }
-.conf-ring::before{
+.conf-ring::before {
   content: "";
   position: absolute;
-  inset: 10px;
-  background: #0f1422;
+  inset: 12px;
+  background: #090c11;
   border-radius: 50%;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.4);
 }
-.conf-ring span{
+.conf-ring span {
   position: relative;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
-  font-size: 1.05rem;
-  color: #e9ecf3;
+  font-size: 1.2rem;
+  color: #ffffff;
 }
 
-/* Labels and chips */
-.pred-label { font-size: 1.15rem; font-weight: 700; letter-spacing: .2px; }
+/* Timeline & Feed components for predictions history */
+.timeline-item {
+  display: flex;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  margin-bottom: 12px;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+.timeline-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6366f1;
+  box-shadow: 0 0 10px #6366f1;
+}
+.timeline-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: #64748b;
+  min-width: 60px;
+}
+.timeline-content {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+.timeline-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(20, 184, 166, 0.08);
+  border: 1px solid rgba(20, 184, 166, 0.15);
+  color: #14b8a6;
+  font-weight: 700;
+}
+
+/* Typography, labels and chips styling */
+.pred-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
 .badge {
-  display:inline-block; padding: 3px 10px; border-radius: 999px;
-  font-size: 0.75rem; font-weight: 700; background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12); color: #dfe7ff;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #cbd5e1;
 }
-.chips { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
-.chip { font-size:.78rem; padding:6px 10px; border-radius:999px;
-        background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.10); }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.chip {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid rgba(255, 255, 255, .06);
+  color: #e2e8f0;
+}
 
-/* Small fade-in */
-.fade-in { animation: fadein 500ms ease 1; }
-@keyframes fadein { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+/* Translucent custom sidebar styling */
+[data-testid="stSidebar"] {
+  background: linear-gradient(180deg, #090c11 0%, #06080c 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Animations */
+.fade-in { animation: fadein 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1; }
+@keyframes fadein { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 </style>
 """, unsafe_allow_html=True)
 
@@ -470,14 +576,19 @@ def main():
     st.markdown("<h1 class='title-text'>Music Genre Classification</h1>", unsafe_allow_html=True)
     st.caption("Upload a .wav file. The app segments the audio and ensembles predictions across the track.")
 
+    # Wrap the uploader in a glowing glass panel
+    st.markdown("<div class='glass-panel fade-in'>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload .wav file", type=["wav"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if uploaded_file is None:
         st.info("Select a .wav file to start.")
         return
 
-    # Load audio and show player
+    # Wrap the audio player in a sleek panel
+    st.markdown("<div class='glass-panel fade-in'>", unsafe_allow_html=True)
     st.audio(uploaded_file, format="audio/wav")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     with st.spinner(f"Extracting features & ensembling predictions using {selected_model_name}..."):
         # 1) audio -> y,sr
@@ -497,9 +608,11 @@ def main():
 
     # Left: waveform + bars
     with left:
-        st.markdown("#### Audio analysis")
+        st.markdown("<div class='glass-panel fade-in'>", unsafe_allow_html=True)
+        st.markdown("#### Audio Analysis & Waveform")
         plot_waveform(y, sr)
         plot_prob_bars(all_probs)
+        st.markdown("</div>", unsafe_allow_html=True)
 
         with st.expander("What the model uses"):
             st.write(
@@ -510,15 +623,25 @@ def main():
 
         with st.expander("Recent predictions (this session)"):
             if "history" in st.session_state and st.session_state.history:
+                history_html = "<div class='fade-in'>"
                 for h in reversed(st.session_state.history):
-                    st.write(f"{h['time']} — {h['genre'].capitalize()} ({h['confidence']}%)")
+                    history_html += f"""
+                    <div class="timeline-item">
+                      <div class="timeline-dot"></div>
+                      <div class="timeline-time">{h['time']}</div>
+                      <div class="timeline-content">{h['genre'].capitalize()}</div>
+                      <div class="timeline-badge">{h['confidence']:.0f}%</div>
+                    </div>
+                    """
+                history_html += "</div>"
+                st.markdown(history_html, unsafe_allow_html=True)
             else:
-                st.write("No history yet.")
+                st.markdown("<p style='color:#64748b; font-size:0.9rem;'>No history yet in this session.</p>", unsafe_allow_html=True)
 
     # Right: result card with animated ring + description
     with right:
         if confidence >= 80:
-            fill = "#4cd964"
+            fill = "#14b8a6" # Custom high-tech Teal instead of plain green
         elif confidence >= 50:
             fill = "#ffd166"
         else:
@@ -527,12 +650,27 @@ def main():
         icon = GENRE_META.get(genre.lower(), {}).get("icon", "🎵")
         desc = GENRE_META.get(genre.lower(), {}).get("desc", "No description available.")
 
+        # Map predicted genre to a specific custom glowing CSS class
+        GENRE_GLOW_MAPPING = {
+            "rock": "glow-rock-metal",
+            "metal": "glow-rock-metal",
+            "classical": "glow-classical-jazz",
+            "jazz": "glow-classical-jazz",
+            "disco": "glow-disco-pop",
+            "pop": "glow-disco-pop",
+            "reggae": "glow-groove-reggae",
+            "hiphop": "glow-groove-reggae",
+            "blues": "glow-groove-reggae",
+            "country": "glow-classical-jazz"
+        }
+        glow_class = GENRE_GLOW_MAPPING.get(genre.lower(), "glow-classical-jazz")
+
         model_chip_name = selected_model_name.split(" (")[0]
         st.markdown(
             f"""
-            <div class="pred-card fade-in">
+            <div class="pred-card fade-in {glow_class}">
               <div class="pred-label">Predicted genre</div>
-              <div style="font-size:1.9rem; font-weight:800; margin:.15rem 0 .6rem 0;">
+              <div style="font-size:1.9rem; font-weight:800; margin:.15rem 0 .6rem 0; color: #ffffff;">
                 {icon} {genre.capitalize()}
               </div>
 
@@ -540,18 +678,18 @@ def main():
                 <div id="ring-slot"></div>
                 <div style="flex:1; min-width:160px;">
                   <div class="badge">Confidence</div>
-                  <div style="margin-top:6px; opacity:.85; font-size:0.92rem;">
-                    Higher means the model is more sure about the prediction.
+                  <div style="margin-top:6px; opacity:.85; font-size:0.88rem; color: #cbd5e1; line-height: 1.4;">
+                    Confidence rating ensembled over ten 3-second windows.
                   </div>
                 </div>
               </div>
 
-              <div style="margin-top:14px;">
+              <div style="margin-top:16px;">
                 <div class="badge">About the genre</div>
-                <div style="margin-top:8px; opacity:.92;">{desc}</div>
+                <div style="margin-top:8px; opacity:.92; color: #e2e8f0; font-size: 0.92rem; line-height: 1.5;">{desc}</div>
               </div>
 
-              <div class="chips" style="margin-top:14px;">
+              <div class="chips" style="margin-top:16px;">
                 <div class="chip">{model_chip_name}</div>
                 <div class="chip">MFCC • Chroma • ZCR</div>
                 <div class="chip">Segment Ensembled</div>
