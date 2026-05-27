@@ -37,6 +37,10 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(x_train)
 X_test_scaled = scaler.transform(x_test)
 
+import joblib
+joblib.dump(scaler, 'scaler.joblib')
+print("Fitted StandardScaler exported to scaler.joblib successfully.")
+
 print("\nData preparation complete. Shapes before reshaping:")
 print(f"X_train_scaled shape: {X_train_scaled.shape}")
 print(f"X_test_scaled shape: {X_test_scaled.shape}")
