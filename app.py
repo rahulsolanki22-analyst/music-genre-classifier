@@ -56,12 +56,17 @@ h1, .title-text {
 /* Style Streamlit's audio element container directly as a glass panel */
 [data-testid="stAudio"] {
   border-radius: 20px;
-  padding: 16px;
+  padding: 10px 16px !important;
+  height: auto !important;
   background: rgba(255, 255, 255, 0.02) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   backdrop-filter: blur(12px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
   margin-bottom: 20px;
+}
+[data-testid="stAudio"] audio {
+  width: 100% !important;
+  height: 40px !important;
 }
 
 /* Streamlit dropzone customized hover */
