@@ -42,20 +42,26 @@ h1, .title-text {
   -webkit-text-fill-color: transparent;
 }
 
-/* Translucent glass panel containers */
-.glass-panel {
+/* Style Streamlit's file uploader container directly as a glass panel */
+[data-testid="stFileUploader"] {
   border-radius: 20px;
-  padding: 24px;
+  padding: 10px;
   background: rgba(255, 255, 255, 0.02) !important;
   border: 1px solid rgba(255, 255, 255, 0.05) !important;
   backdrop-filter: blur(12px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
   margin-bottom: 20px;
-  transition: transform 0.3s ease, border-color 0.3s ease;
 }
-.glass-panel:hover {
-  border-color: rgba(99, 102, 241, 0.15) !important;
-  transform: translateY(-2px);
+
+/* Style Streamlit's audio element container directly as a glass panel */
+[data-testid="stAudio"] {
+  border-radius: 20px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  margin-bottom: 20px;
 }
 
 /* Streamlit dropzone customized hover */
@@ -576,19 +582,13 @@ def main():
     st.markdown("<h1 class='title-text'>Music Genre Classification</h1>", unsafe_allow_html=True)
     st.caption("Upload a .wav file. The app segments the audio and ensembles predictions across the track.")
 
-    # Wrap the uploader in a glowing glass panel
-    st.markdown("<div class='glass-panel fade-in'>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload .wav file", type=["wav"])
-    st.markdown("</div>", unsafe_allow_html=True)
 
     if uploaded_file is None:
         st.info("Select a .wav file to start.")
         return
 
-    # Wrap the audio player in a sleek panel
-    st.markdown("<div class='glass-panel fade-in'>", unsafe_allow_html=True)
     st.audio(uploaded_file, format="audio/wav")
-    st.markdown("</div>", unsafe_allow_html=True)
 
     with st.spinner(f"Extracting features & ensembling predictions using {selected_model_name}..."):
         # 1) audio -> y,sr
@@ -608,11 +608,9 @@ def main():
 
     # Left: waveform + bars
     with left:
-        st.markdown("<div class='glass-panel fade-in'>", unsafe_allow_html=True)
         st.markdown("#### Audio Analysis & Waveform")
         plot_waveform(y, sr)
         plot_prob_bars(all_probs)
-        st.markdown("</div>", unsafe_allow_html=True)
 
         with st.expander("What the model uses"):
             st.write(
